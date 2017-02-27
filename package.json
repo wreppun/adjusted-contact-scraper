@@ -4,5 +4,11 @@
   "description": "A visualization for adjusted contact",
   "main": "index.js",
   "author": "Will Reppun <reppun@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "request": "^2.79.0",
+    "request-promise": "^4.1.1",
+    "xmldom": "^0.1.27",
+    "xpath": "^0.0.23"
+  }
 }
