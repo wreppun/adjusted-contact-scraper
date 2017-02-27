@@ -11,8 +11,16 @@ function onDate (date) {
 
       return xpath
         .select('//a[starts-with(@href, "gid_")]/@href', doc)
-        .map(game => game.value.slice(0, -1));
-    });
+        .map(game => game.value)
+        .map(gameId => indexUrl + gameId + 'boxscore.json');
+    })
+    .map(boxscoreUrl => rp(boxscoreUrl))
+    .map(JSON.parse)
+    .map(extractGamePk);
+}
+
+function extractGamePk (boxscore) {
+  return boxscore.data.boxscore.game_pk;
 }
 
 function createIndexUrl (date) {
