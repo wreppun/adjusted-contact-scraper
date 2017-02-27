@@ -1,0 +1,8 @@
+{
+  "name": "adjusted-contact",
+  "version": "0.0.0",
+  "description": "A visualization for adjusted contact",
+  "main": "index.js",
+  "author": "Will Reppun <reppun@gmail.com>",
+  "license": "MIT"
+}
