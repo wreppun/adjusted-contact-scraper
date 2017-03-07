@@ -5,6 +5,8 @@ const xpath = require('xpath');
 function onDate (date) {
   const indexUrl = createIndexUrl(date);
 
+  console.log(date.toISOString());
+
   return rp(indexUrl)
     .then(indexPage => {
       const doc = new Dom().parseFromString(indexPage);
@@ -14,9 +16,14 @@ function onDate (date) {
         .map(game => game.value)
         .map(gameId => indexUrl + gameId + 'boxscore.json');
     })
-    .map(boxscoreUrl => rp(boxscoreUrl))
+    .map(boxscoreUrl => rp(boxscoreUrl).catch(e => false))
+    .filter(json => json)
     .map(JSON.parse)
-    .map(extractGamePk);
+    .map(extractGamePk)
+    .catch(e => {
+      console.log('error retrieving pk', indexUrl);
+      throw e;
+    });
 }
 
 function extractGamePk (boxscore) {
@@ -26,7 +33,11 @@ function extractGamePk (boxscore) {
 function createIndexUrl (date) {
   const baseUrl = 'http://gd2.mlb.com/components/game/mlb/';
   const year = date.getUTCFullYear();
-  const month = maybePad(date.getMonth());
+
+  // month is zero indexed
+  const month = maybePad(date.getMonth() + 1);
+
+  // date is not
   const day = maybePad(date.getDate());
 
   return `${baseUrl}year_${year}/month_${month}/day_${day}/`;
