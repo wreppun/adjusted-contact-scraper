@@ -1,6 +1,7 @@
 const fs = require('fs');
 const {db} = require('./db');
 const {ev, la} = require('./constants/buckets');
+const {rename} = require('./utils');
 
 const leaguePerformanceBuckets = (evBuckets, laBuckets) => {
   const evLaBuckets = evBuckets.map(evBucket => laBuckets.map(laBucket =>
@@ -35,6 +36,26 @@ const leaguePerformanceBuckets = (evBuckets, laBuckets) => {
     .then(results => fs.writeFile('./processed/leaguePerformance.json', results));
 };
 
+const playerInfo = () => {
+  db('exit_velocity')
+    .distinct('batter_name', 'batter')
+    .select()
+    .then(results => results.sort((a, b) => a.batter_name.localeCompare(b.batter_name)))
+    .then(results => results.map(r => rename(r, [
+      {
+        from: 'batter_name',
+        to: 'name'
+      },
+      {
+        from: 'batter',
+        to: 'id'
+      }
+    ])))
+    .then(results => JSON.stringify(results, null, 2))
+    .then(results => fs.writeFile('./processed/players.json', results));
+};
+
 module.exports = {
-  leagueBuckets: () => leaguePerformanceBuckets(ev, la)
+  leagueBuckets: () => leaguePerformanceBuckets(ev, la),
+  playerInfo
 };

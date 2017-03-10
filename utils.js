@@ -19,7 +19,7 @@ module.exports = {
 
     transforms.forEach(({from, to}) => {
       result[to] = result[from];
-      result[from] = null;
+      delete result[from];
     });
 
     return result;
