@@ -1,7 +1,7 @@
 const fs = require('fs');
-const {db} = require('./db');
+const {db} = require('../db');
 const {ev, la} = require('./constants/buckets');
-const {rename} = require('./utils');
+const {rename} = require('../utils');
 
 const leaguePerformanceBuckets = (evBuckets, laBuckets) => {
   const evLaBuckets = evBuckets.map(evBucket => laBuckets.map(laBucket =>
@@ -12,8 +12,6 @@ const leaguePerformanceBuckets = (evBuckets, laBuckets) => {
       laMax: laBucket.max
     })))
     .reduce((agg, buckets) => agg.concat(buckets), []);
-
-  // console.log(evLaBuckets);
 
   Promise.all(
     evLaBuckets.map(bucket => db('league_performance')
@@ -33,7 +31,7 @@ const leaguePerformanceBuckets = (evBuckets, laBuckets) => {
         .filter(r => r.abs > 0)
         .map(r => Object.assign({}, r, {wobaAvg: r.wobas / r.abs})))
     .then(results => JSON.stringify(results, null, 2))
-    .then(results => fs.writeFile('./processed/leaguePerformance.json', results));
+    .then(results => fs.writeFile('./static/leaguePerformance.json', results));
 };
 
 const playerInfo = () => {
@@ -52,7 +50,7 @@ const playerInfo = () => {
       }
     ])))
     .then(results => JSON.stringify(results, null, 2))
-    .then(results => fs.writeFile('./processed/players.json', results));
+    .then(results => fs.writeFile('./static/players.json', results));
 };
 
 module.exports = {
