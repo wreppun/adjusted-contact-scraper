@@ -3,6 +3,22 @@ const {db} = require('../db');
 const {ev, la} = require('./constants/buckets');
 const {rename} = require('../utils');
 
+const allLeague = () => db('league_performance')
+    .select('hit_angle', 'hit_speed', 'ab', 'woba')
+    .then(records => { console.log(records.length); return records; })
+    .then(records => records.map(record => rename(record, [
+      {
+        from: 'hit_angle',
+        to: 'angle'
+      },
+      {
+        from: 'hit_speed',
+        to: 'velocity'
+      }
+    ])))
+    .then(records => JSON.stringify(records, null, 2))
+    .then(records => fs.writeFile('./static/leaguePerformanceAll.json', records));
+
 const leaguePerformanceBuckets = (evBuckets, laBuckets) => {
   const evLaBuckets = evBuckets.map(evBucket => laBuckets.map(laBucket =>
     Object.assign({
@@ -34,8 +50,7 @@ const leaguePerformanceBuckets = (evBuckets, laBuckets) => {
     .then(results => fs.writeFile('./static/leaguePerformance.json', results));
 };
 
-const playerInfo = () => {
-  db('exit_velocity')
+const playerInfo = () => db('exit_velocity')
     .distinct('batter_name', 'batter')
     .select()
     .then(results => results.sort((a, b) => a.batter_name.localeCompare(b.batter_name)))
@@ -51,9 +66,9 @@ const playerInfo = () => {
     ])))
     .then(results => JSON.stringify(results, null, 2))
     .then(results => fs.writeFile('./static/players.json', results));
-};
 
 module.exports = {
+  allLeague,
   leagueBuckets: () => leaguePerformanceBuckets(ev, la),
   playerInfo
 };
