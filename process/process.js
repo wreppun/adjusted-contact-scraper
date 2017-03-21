@@ -1,4 +1,5 @@
 const fs = require('fs');
+const normalize = require('normalize-for-search');
 const {db} = require('../db');
 const {ev, la} = require('./constants/buckets');
 const {rename} = require('../utils');
@@ -64,6 +65,9 @@ const playerInfo = () => db('exit_velocity')
         to: 'id'
       }
     ])))
+    .then(results => results.map(r => Object.assign({}, r, {
+      normalized: normalize(r.name)
+    })))
     .then(results => JSON.stringify(results, null, 2))
     .then(results => fs.writeFile('./static/players.json', results));
 
