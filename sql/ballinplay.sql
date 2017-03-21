@@ -1,6 +1,6 @@
 CREATE TABLE exit_velocity (
   id serial,
-  game_pk varchar(15)
+  game_pk varchar(15),
   inning int,
   ab_number int,
   outs int,
@@ -18,7 +18,7 @@ CREATE TABLE exit_velocity (
   strikes int,
   balls int,
   pre_strikes int,
-  pre_balls 0,
+  pre_balls int,
   call char,
   call_name varchar(31),
   pitch_type varchar(7),
@@ -38,5 +38,6 @@ CREATE TABLE exit_velocity (
   pitch_number int,
   hc_x real,
   hc_y real,
-  xba real
+  xba real,
+  xwoba real
 );
